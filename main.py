@@ -42,7 +42,7 @@ logger = get_logger(__name__)
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="🦺 PPE Detection System - YOLOv8",
+        description="PPE Detection System - YOLOv8",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -141,12 +141,13 @@ def print_banner() -> None:
     banner = """
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
-║   🦺  PPE DETECTION SYSTEM                               ║
+║   PPE DETECTION SYSTEM by Nadhif Fauzil A                ║
 ║   ━━━━━━━━━━━━━━━━━━━━━━━━                               ║
 ║                                                          ║
-║   Model     : YOLOv8n (Nano)                             ║
-║   Classes   : Gloves, Vest, Goggles,                     ║
-║               Helmet, Mask, Safety Shoe                  ║
+║   Model     : YOLOv8 PPE                                 ║
+║   Classes   : Hardhat, Mask, NO-Hardhat, NO-Mask,        ║
+║               NO-Safety Vest, Person, Safety Cone,       ║
+║               Safety Vest, machinery, vehicle            ║
 ║   Framework : Ultralytics + OpenCV                       ║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
@@ -166,12 +167,12 @@ def main():
     settings = apply_cli_overrides(settings, args)
 
     # Log configuration
-    logger.info(f"📁 Project root: {PROJECT_ROOT}")
-    logger.info(f"🎯 Model weights: {settings.model.weights_path}")
-    logger.info(f"📹 Video source: {settings.video.source}")
-    logger.info(f"🖥️  Device: {settings.model.device}")
-    logger.info(f"📊 Confidence: {settings.model.confidence_threshold}")
-    logger.info(f"🔄 Tracking: {'ON' if settings.detection.enable_tracking else 'OFF'}")
+    logger.info(f"Project root: {PROJECT_ROOT}")
+    logger.info(f"Model weights: {settings.model.weights_path}")
+    logger.info(f"Video source: {settings.video.source}")
+    logger.info(f"Device: {settings.model.device}")
+    logger.info(f"Confidence: {settings.model.confidence_threshold}")
+    logger.info(f"Tracking: {'ON' if settings.detection.enable_tracking else 'OFF'}")
 
     # Create and run engine
     engine = DetectionEngine(settings)

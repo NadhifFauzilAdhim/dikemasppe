@@ -56,14 +56,17 @@ class VisualizationConfig:
     bbox_thickness: int = 2
     font_scale: float = 0.6
     font_thickness: int = 2
-    # Warna per class (BGR format)
     class_colors: Dict[int, tuple] = field(default_factory=lambda: {
-        0: (0, 255, 128),    # Gloves      - Green
-        1: (255, 165, 0),    # Vest        - Orange
-        2: (255, 255, 0),    # Goggles     - Cyan
-        3: (0, 128, 255),    # Helmet      - Blue
-        4: (147, 20, 255),   # Mask        - Pink
-        5: (0, 255, 255),    # Safety Shoe - Yellow
+        0: (0, 200, 0),      # Hardhat         - Green
+        1: (255, 165, 0),    # Mask            - Orange
+        2: (0, 0, 255),      # NO-Hardhat      - Red
+        3: (0, 0, 200),      # NO-Mask         - Dark Red
+        4: (0, 0, 180),      # NO-Safety Vest  - Red
+        5: (255, 255, 0),    # Person          - Cyan
+        6: (0, 255, 255),    # Safety Cone     - Yellow
+        7: (0, 255, 128),    # Safety Vest     - Green
+        8: (200, 100, 50),   # machinery       - Blue
+        9: (180, 130, 70),   # vehicle         - Steel Blue
     })
 
 
@@ -82,7 +85,7 @@ class DetectionConfig:
 @dataclass
 class LoggingConfig:
     """Logging Configuration."""
-    level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR
+    level: str = "INFO"  
     log_to_file: bool = False
     log_file_path: str = str(OUTPUTS_DIR / "detection.log")
     log_detections: bool = True
@@ -99,12 +102,16 @@ class Settings:
 
     # PPE Class Names
     class_names: Dict[int, str] = field(default_factory=lambda: {
-        0: "Gloves",
-        1: "Vest",
-        2: "Goggles",
-        3: "Helmet",
-        4: "Mask",
-        5: "Safety Shoe",
+        0: "Hardhat",
+        1: "Mask",
+        2: "NO-Hardhat",
+        3: "NO-Mask",
+        4: "NO-Safety Vest",
+        5: "Person",
+        6: "Safety Cone",
+        7: "Safety Vest",
+        8: "machinery",
+        9: "vehicle",
     })
 
     @classmethod

@@ -100,7 +100,7 @@ class DetectionEngine:
             True if initialization successful
         """
         logger.info("=" * 60)
-        logger.info("🦺 PPE Detection System - Initializing")
+        logger.info("PPE Detection System - Initializing")
         logger.info("=" * 60)
 
         # Load model
@@ -108,12 +108,12 @@ class DetectionEngine:
             self.detector.load()
             self.detector.warmup()
         except Exception as e:
-            logger.error(f"❌ Model initialization failed: {e}")
+            logger.error(f"Model initialization failed: {e}")
             return False
 
         # Open video source
         if not self.video_source.open():
-            logger.error("❌ Video source initialization failed")
+            logger.error("Video source initialization failed")
             return False
 
         # Setup video writer if saving output
@@ -121,10 +121,10 @@ class DetectionEngine:
             self._writer = self.video_source.get_writer()
 
         logger.info("=" * 60)
-        logger.info("✅ All components initialized successfully")
+        logger.info("All components initialized successfully")
         logger.info("=" * 60)
         logger.info("")
-        logger.info("📋 Controls:")
+        logger.info("Controls:")
         logger.info("   [Q] / [ESC] - Quit")
         logger.info("   [P]         - Pause / Resume")
         logger.info("   [S]         - Screenshot")
@@ -141,11 +141,11 @@ class DetectionEngine:
         or the video source ends.
         """
         if not self.initialize():
-            logger.error("❌ Failed to initialize engine. Exiting.")
+            logger.error("Failed to initialize engine. Exiting.")
             return
 
         self._is_running = True
-        logger.info("🚀 Detection started! Press 'Q' to quit.")
+        logger.info("Detection started! Press 'Q' to quit.")
 
         try:
             for frame in self.video_source.stream():
@@ -179,7 +179,7 @@ class DetectionEngine:
                     break
 
         except KeyboardInterrupt:
-            logger.info("\n⛔ Detection stopped by user (Ctrl+C)")
+            logger.info("\n Detection stopped by user (Ctrl+C)")
 
         finally:
             self.cleanup()
@@ -224,7 +224,7 @@ class DetectionEngine:
             and frame_result.frame_id % 30 == 0  # Log every 30 frames
         ):
             logger.info(
-                f"🔍 Frame #{frame_result.frame_id}: "
+                f"Frame #{frame_result.frame_id}: "
                 f"{frame_result.detection_count} detections - "
                 f"{frame_result.class_counts}"
             )
@@ -249,13 +249,13 @@ class DetectionEngine:
 
         # Quit
         if key in (ord("q"), ord("Q"), 27):  # Q or ESC
-            logger.info("👋 Quit requested by user")
+            logger.info("Quit requested by user")
             return False
 
         # Pause / Resume
         elif key in (ord("p"), ord("P")):
             self._is_paused = not self._is_paused
-            status = "⏸️  PAUSED" if self._is_paused else "▶️  RESUMED"
+            status = "PAUSED" if self._is_paused else "RESUMED"
             logger.info(status)
 
         # Screenshot
@@ -265,7 +265,7 @@ class DetectionEngine:
         # Reset FPS
         elif key in (ord("r"), ord("R")):
             self._fps_buffer.clear()
-            logger.info("🔄 FPS counter reset")
+            logger.info("FPS counter reset")
 
         return True
 
@@ -279,26 +279,26 @@ class DetectionEngine:
         filepath = output_dir / f"screenshot_{timestamp}.jpg"
 
         # We would need to store the last frame — for now log intent
-        logger.info(f"📸 Screenshot saved: {filepath}")
+        logger.info(f"Screenshot saved: {filepath}")
 
     def stop(self) -> None:
         """Stop the detection loop."""
         self._is_running = False
-        logger.info("⏹️  Stop signal sent")
+        logger.info("Stop signal sent")
 
     def cleanup(self) -> None:
         """Release all resources."""
-        logger.info("🧹 Cleaning up resources...")
+        logger.info("Cleaning up resources...")
 
         self._is_running = False
 
         if self._writer is not None:
             self._writer.release()
             self._writer = None
-            logger.info("💾 Video output saved")
+            logger.info("Video output saved")
 
         self.video_source.release()
         self.detector.release()
         cv2.destroyAllWindows()
 
-        logger.info("✅ Cleanup complete")
+        logger.info("Cleanup complete")

@@ -56,19 +56,19 @@ class PPEDetector:
 
         # Resolve device
         self.device = self._resolve_device(self.settings.model.device)
-        logger.info(f"🔧 Using device: {self.device}")
+        logger.info(f"Using device: {self.device}")
 
         # Load model
-        logger.info(f"📦 Loading model: {weights_path.name}")
+        logger.info(f"Loading model: {weights_path.name}")
         try:
             self.model = YOLO(str(weights_path))
             self._is_loaded = True
-            logger.info(f"✅ Model loaded successfully")
+            logger.info(f"Model loaded successfully")
             logger.info(f"   Classes: {list(self.settings.class_names.values())}")
             logger.info(f"   Input size: {self.settings.model.input_size}x{self.settings.model.input_size}")
             logger.info(f"   Confidence threshold: {self.settings.model.confidence_threshold}")
         except Exception as e:
-            logger.error(f"❌ Failed to load model: {e}")
+            logger.error(f"Failed to load model: {e}")
             raise RuntimeError(f"Model loading failed: {e}")
 
     def predict(self, frame: np.ndarray, track: bool = False):
@@ -124,7 +124,7 @@ class PPEDetector:
         if not self._is_loaded:
             return
 
-        logger.info(f"🔥 Warming up model ({n} iterations)...")
+        logger.info(f"Warming up model ({n} iterations)...")
         dummy = np.zeros(
             (self.settings.model.input_size, self.settings.model.input_size, 3),
             dtype=np.uint8
@@ -138,7 +138,7 @@ class PPEDetector:
                 verbose=False,
             )
 
-        logger.info("✅ Warmup complete")
+        logger.info("Warmup complete")
 
     def get_model_info(self) -> dict:
         """Get model metadata and configuration info."""
@@ -175,10 +175,10 @@ class PPEDetector:
             if torch.cuda.is_available():
                 device = "cuda:0"
                 gpu_name = torch.cuda.get_device_name(0)
-                logger.info(f"🎮 CUDA GPU detected: {gpu_name}")
+                logger.info(f"CUDA GPU detected: {gpu_name}")
                 return device
             else:
-                logger.warning("⚠️  No CUDA GPU detected, falling back to CPU")
+                logger.warning("No CUDA GPU detected, falling back to CPU")
                 return "cpu"
 
         return device_config
@@ -193,4 +193,4 @@ class PPEDetector:
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
-            logger.info("🗑️  Model resources released")
+            logger.info("Model resources released")

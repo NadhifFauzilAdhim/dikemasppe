@@ -56,7 +56,7 @@ class VideoSource:
 
         # Determine source type
         self._source_type = self._detect_source_type(source)
-        logger.info(f"📹 Opening video source: {source} (type: {self._source_type})")
+        logger.info(f"Opening video source: {source} (type: {self._source_type})")
 
         # Parse webcam index
         if self._source_type == "webcam":
@@ -66,7 +66,7 @@ class VideoSource:
         self._cap = cv2.VideoCapture(source)
 
         if not self._cap.isOpened():
-            logger.error(f"❌ Failed to open video source: {source}")
+            logger.error(f"Failed to open video source: {source}")
             return False
 
         # Configure capture properties
@@ -79,7 +79,7 @@ class VideoSource:
         actual_w = int(self._cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         actual_h = int(self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         actual_fps = self._cap.get(cv2.CAP_PROP_FPS)
-        logger.info(f"✅ Video source opened: {actual_w}x{actual_h} @ {actual_fps:.1f} FPS")
+        logger.info(f"Video source opened: {actual_w}x{actual_h} @ {actual_fps:.1f} FPS")
 
         return True
 
@@ -119,9 +119,9 @@ class VideoSource:
             ret, frame = self.read()
             if not ret:
                 if self._source_type == "file":
-                    logger.info("📼 End of video file reached")
+                    logger.info("End of video file reached")
                 else:
-                    logger.warning("⚠️  Failed to read frame")
+                    logger.warning("Failed to read frame")
                 break
             yield frame
 
@@ -184,7 +184,7 @@ class VideoSource:
         fourcc = cv2.VideoWriter_fourcc(*self.settings.video.output_codec)
 
         writer = cv2.VideoWriter(output_path, fourcc, fps, (w, h))
-        logger.info(f"💾 Video writer created: {output_path} ({w}x{h} @ {fps} FPS)")
+        logger.info(f"Video writer created: {output_path} ({w}x{h} @ {fps} FPS)")
 
         return writer
 
@@ -194,7 +194,7 @@ class VideoSource:
             self._cap.release()
             self._cap = None
             self._is_opened = False
-            logger.info("🗑️  Video source released")
+            logger.info("Video source released")
 
     def _configure_capture(self) -> None:
         """Configure capture properties based on settings."""
