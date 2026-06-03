@@ -1,0 +1,51 @@
+# ============================================
+# PPE Detection System - Configuration
+# ============================================
+# Override default settings here.
+# Only include settings you want to change.
+
+model:
+  weights_path: "yolomodel/best.pt"
+  input_size: 640
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+  max_detections: 100
+  device: "auto"            # "auto", "cpu", "cuda", "cuda:0"
+  half_precision: false      # Set true for FP16 (GPU only)
+
+video:
+  source: "0"               # "0" = webcam, or path/URL
+  frame_width: 1280
+  frame_height: 720
+  fps: 30
+  buffer_size: 1
+  save_output: false
+  output_path: "outputs/output.mp4"
+
+visualization:
+  show_confidence: true
+  show_labels: true
+  show_fps: true
+  show_count: true
+  bbox_thickness: 2
+  font_scale: 0.6
+
+detection:
+  min_bbox_area: 500
+  target_classes: null       # null = all classes, or [0, 1, 3]
+  enable_tracking: false
+  tracker_type: "bytetrack"
+
+logging:
+  level: "INFO"
+  log_to_file: false
+  log_detections: true
+
+# PPE Class Names
+class_names:
+  0: "Gloves"
+  1: "Vest"
+  2: "Goggles"
+  3: "Helmet"
+  4: "Mask"
+  5: "Safety Shoe"
