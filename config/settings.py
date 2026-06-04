@@ -104,6 +104,10 @@ class ApiConfig:
     cooldown_seconds: int = 30
     save_local: bool = True
     capture_dir: str = str(OUTPUTS_DIR / "violations")
+    # Image compression settings
+    jpeg_quality: int = 60          # JPEG quality (1-100), lower = smaller file
+    max_image_width: int = 800      # Max width in pixels (0 = no resize)
+    max_image_height: int = 600     # Max height in pixels (0 = no resize)
 
 
 @dataclass

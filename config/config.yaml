@@ -42,7 +42,7 @@ logging:
   log_detections: true
 
 api:
-  enabled: false               
+  enabled: true               
   base_url: "http://localhost:8000"
   endpoint: "/api/v1/violations"
   api_key: ""                   # Bearer token (optional)
@@ -52,6 +52,10 @@ api:
   cooldown_seconds: 30          # Min seconds between same violation uploads
   save_local: true              # Save violation captures locally
   capture_dir: "outputs/violations"
+  # Image compression (reduces upload size significantly)
+  jpeg_quality: 60              # JPEG quality 1-100 (lower = smaller file, 60 recommended)
+  max_image_width: 800          # Max pixel width (0 = no resize)
+  max_image_height: 600         # Max pixel height (0 = no resize)
 
 # PPE Class Names
 # class_names:

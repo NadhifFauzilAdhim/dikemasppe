@@ -91,6 +91,11 @@ class ViolationUploader:
         self._worker_thread: Optional[threading.Thread] = None
         self._is_running = False
 
+        # Image compression settings
+        self._jpeg_quality = max(1, min(100, settings.api.jpeg_quality))
+        self._max_width = settings.api.max_image_width
+        self._max_height = settings.api.max_image_height
+
         # Stats
         self._upload_count = 0
         self._error_count = 0
@@ -166,16 +171,11 @@ class ViolationUploader:
 
             self._last_upload_time[vtype] = now
 
-            # Encode frame as JPEG bytes
-            success, jpeg_buffer = cv2.imencode(
-                ".jpg", frame,
-                [cv2.IMWRITE_JPEG_QUALITY, 85]
-            )
-            if not success:
-                logger.warning("Failed to encode frame as JPEG")
+            # Compress and encode frame as JPEG bytes
+            jpeg_bytes = self._compress_image(frame)
+            if jpeg_bytes is None:
+                logger.warning("Failed to compress frame")
                 continue
-
-            jpeg_bytes = jpeg_buffer.tobytes()
 
             # Save locally if enabled
             if self.settings.api.save_local:
@@ -290,6 +290,63 @@ class ViolationUploader:
 
         self._error_count += 1
         return False
+
+    def _compress_image(self, frame: np.ndarray) -> Optional[bytes]:
+        """
+        Compress image by resizing and lowering JPEG quality.
+
+        Steps:
+        1. Resize to fit within max_width x max_height (maintain aspect ratio)
+        2. Encode as JPEG with configured quality level
+
+        Args:
+            frame: BGR image (numpy array)
+
+        Returns:
+            Compressed JPEG bytes, or None on failure
+        """
+        try:
+            img = frame.copy()
+            h, w = img.shape[:2]
+
+            # Resize if max dimensions are set and image exceeds them
+            if self._max_width > 0 and self._max_height > 0:
+                if w > self._max_width or h > self._max_height:
+                    scale = min(self._max_width / w, self._max_height / h)
+                    new_w = int(w * scale)
+                    new_h = int(h * scale)
+                    img = cv2.resize(
+                        img, (new_w, new_h),
+                        interpolation=cv2.INTER_AREA
+                    )
+                    logger.debug(
+                        f"Image resized: {w}x{h} -> {new_w}x{new_h}"
+                    )
+
+            # Encode with configured JPEG quality
+            success, jpeg_buffer = cv2.imencode(
+                ".jpg", img,
+                [cv2.IMWRITE_JPEG_QUALITY, self._jpeg_quality]
+            )
+
+            if not success:
+                return None
+
+            compressed_bytes = jpeg_buffer.tobytes()
+            original_size = len(cv2.imencode(".jpg", frame)[1].tobytes())
+            compressed_size = len(compressed_bytes)
+
+            logger.debug(
+                f"Image compressed: {original_size / 1024:.1f}KB -> "
+                f"{compressed_size / 1024:.1f}KB "
+                f"({(1 - compressed_size / original_size) * 100:.0f}% reduction)"
+            )
+
+            return compressed_bytes
+
+        except Exception as e:
+            logger.error(f"Image compression failed: {e}")
+            return None
 
     def _save_local(self, jpeg_bytes: bytes, violation_type: str, frame_id: int) -> None:
         """Save violation capture locally as backup."""
