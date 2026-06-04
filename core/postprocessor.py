@@ -64,10 +64,9 @@ class FrameResult:
 
     @property
     def has_violations(self) -> bool:
-        """Check if any required PPE is missing (placeholder logic)."""
-        detected_classes = {det.class_name for det in self.detections}
-        # This can be customized based on requirements
-        return len(detected_classes) == 0
+        """Check if any PPE violations (NO-* classes) are detected."""
+        violation_ids = {2, 3, 4}  # NO-Hardhat, NO-Mask, NO-Safety Vest
+        return any(det.class_id in violation_ids for det in self.detections)
 
     def to_dict(self) -> dict:
         return {

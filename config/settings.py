@@ -92,6 +92,21 @@ class LoggingConfig:
 
 
 @dataclass
+class ApiConfig:
+    """API Upload Configuration for violation reporting."""
+    enabled: bool = False
+    base_url: str = "http://localhost:8000"
+    endpoint: str = "/api/v1/violations"
+    api_key: str = ""
+    camera_id: str = "CAM-001"
+    timeout: int = 10
+    max_retries: int = 3
+    cooldown_seconds: int = 30
+    save_local: bool = True
+    capture_dir: str = str(OUTPUTS_DIR / "violations")
+
+
+@dataclass
 class Settings:
     """Master Settings - Combines all config sections."""
     model: ModelConfig = field(default_factory=ModelConfig)
@@ -99,6 +114,7 @@ class Settings:
     visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
     detection: DetectionConfig = field(default_factory=DetectionConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
+    api: ApiConfig = field(default_factory=ApiConfig)
 
     # PPE Class Names
     class_names: Dict[int, str] = field(default_factory=lambda: {
@@ -146,6 +162,11 @@ class Settings:
             for key, value in config_data["logging"].items():
                 if hasattr(settings.logging, key):
                     setattr(settings.logging, key, value)
+
+        if "api" in config_data:
+            for key, value in config_data["api"].items():
+                if hasattr(settings.api, key):
+                    setattr(settings.api, key, value)
 
         if "class_names" in config_data:
             settings.class_names = {

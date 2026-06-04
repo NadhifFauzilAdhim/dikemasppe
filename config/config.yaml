@@ -41,6 +41,18 @@ logging:
   log_to_file: false
   log_detections: true
 
+api:
+  enabled: false               
+  base_url: "http://localhost:8000"
+  endpoint: "/api/v1/violations"
+  api_key: ""                   # Bearer token (optional)
+  camera_id: "CAM-001"          # Identifier for this camera
+  timeout: 10                   # Request timeout (seconds)
+  max_retries: 3                # Retry on failure
+  cooldown_seconds: 30          # Min seconds between same violation uploads
+  save_local: true              # Save violation captures locally
+  capture_dir: "outputs/violations"
+
 # PPE Class Names
 # class_names:
 #   0: "Gloves"

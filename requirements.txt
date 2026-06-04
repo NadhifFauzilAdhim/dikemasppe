@@ -8,6 +8,7 @@ torchvision>=0.15.0
 pyyaml>=6.0                 
 colorlog>=6.7.0             
 Pillow>=10.0.0              
+requests>=2.31.0
 
 # Export / Deployment (optional)
 # onnxruntime-gpu>=1.16.0   # ONNX Runtime with GPU

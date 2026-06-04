@@ -19,6 +19,7 @@ from core.preprocessor import FramePreprocessor
 from core.postprocessor import DetectionPostprocessor, FrameResult
 from utils.video_source import VideoSource
 from utils.visualization import DetectionVisualizer
+from utils.api_client import ViolationUploader
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -69,6 +70,9 @@ class DetectionEngine:
 
         # Video writer
         self._writer: Optional[cv2.VideoWriter] = None
+
+        # Violation uploader
+        self._uploader = ViolationUploader(settings)
 
     def set_on_detection_callback(self, callback: Callable[[FrameResult], None]) -> None:
         """
@@ -130,6 +134,8 @@ class DetectionEngine:
         logger.info("   [S]         - Screenshot")
         logger.info("   [R]         - Reset FPS counter")
         logger.info("")
+        # Start violation uploader
+        self._uploader.start()
 
         return True
 
@@ -166,6 +172,9 @@ class DetectionEngine:
 
                 if self._on_frame:
                     self._on_frame(annotated_frame, result)
+
+                # Check for violations and upload
+                self._uploader.check_and_upload(annotated_frame, result)
 
                 # Save frame if recording
                 if self._writer is not None:
@@ -299,6 +308,7 @@ class DetectionEngine:
 
         self.video_source.release()
         self.detector.release()
+        self._uploader.stop()
         cv2.destroyAllWindows()
 
         logger.info("Cleanup complete")

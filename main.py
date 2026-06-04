@@ -142,7 +142,7 @@ def print_banner() -> None:
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
 ║   PPE DETECTION SYSTEM by Nadhif Fauzil A                ║
-║   ━━━━━━━━━━━━━━━━━━━━━━━━                               ║
+║   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━                ║
 ║                                                          ║
 ║   Model     : YOLOv8 PPE                                 ║
 ║   Classes   : Hardhat, Mask, NO-Hardhat, NO-Mask,        ║
@@ -162,7 +162,8 @@ def main():
     # Parse CLI arguments
     args = parse_args()
 
-    # Load settings
+    # Load settingsclear
+    
     settings = get_settings(args.config)
     settings = apply_cli_overrides(settings, args)
 
