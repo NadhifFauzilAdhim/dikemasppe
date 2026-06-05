@@ -10,6 +10,10 @@ import yaml
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # ============================================
@@ -191,10 +195,24 @@ def get_settings(config_path: Optional[str] = None) -> Settings:
     3. Default Settings values
     """
     if config_path and os.path.exists(config_path):
-        return Settings.from_yaml(config_path)
+        settings = Settings.from_yaml(config_path)
+    else:
+        default_config = CONFIG_DIR / "config.yaml"
+        if default_config.exists():
+            settings = Settings.from_yaml(str(default_config))
+        else:
+            settings = Settings()
+            
+    # Override with environment variables if present
+    if os.getenv("API_BASE_URL"):
+        settings.api.base_url = os.getenv("API_BASE_URL")
+    if os.getenv("API_ENDPOINT"):
+        settings.api.endpoint = os.getenv("API_ENDPOINT")
+    if os.getenv("API_KEY"):
+        settings.api.api_key = os.getenv("API_KEY")
+    if os.getenv("CAMERA_ID"):
+        settings.api.camera_id = os.getenv("CAMERA_ID")
+    if os.getenv("VIDEO_SOURCE"):
+        settings.video.source = os.getenv("VIDEO_SOURCE")
 
-    default_config = CONFIG_DIR / "config.yaml"
-    if default_config.exists():
-        return Settings.from_yaml(str(default_config))
-
-    return Settings()
+    return settings

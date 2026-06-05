@@ -13,3 +13,4 @@ requests>=2.31.0
 # Export / Deployment (optional)
 # onnxruntime-gpu>=1.16.0   # ONNX Runtime with GPU
 # tensorrt>=8.6.0           # TensorRT optimization
+python-dotenv>=1.0.0
