@@ -357,8 +357,33 @@ class ViolationUploader:
         try:
             filepath.write_bytes(jpeg_bytes)
             logger.debug(f"Violation saved locally: {filepath}")
+            
+            # Auto-cleanup old images
+            self._cleanup_old_images()
         except Exception as e:
             logger.warning(f"Failed to save local capture: {e}")
+
+    def _cleanup_old_images(self) -> None:
+        """Keep only the most recent max_saved_images in capture_dir."""
+        max_images = getattr(self.settings.api, "max_saved_images", 100)
+        if max_images <= 0:
+            return
+            
+        try:
+            # Get all jpg files sorted by modification time (oldest first)
+            files = sorted(self._capture_dir.glob("*.jpg"), key=lambda x: x.stat().st_mtime)
+            
+            if len(files) > max_images:
+                files_to_delete = files[:-max_images]
+                for f in files_to_delete:
+                    try:
+                        f.unlink()
+                    except Exception as e:
+                        logger.warning(f"Could not delete {f}: {e}")
+                if files_to_delete:
+                    logger.info(f"Auto-cleaned {len(files_to_delete)} old violation images")
+        except Exception as e:
+            logger.warning(f"Failed to cleanup old images: {e}")
 
     @property
     def stats(self) -> dict:

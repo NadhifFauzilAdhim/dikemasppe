@@ -75,7 +75,7 @@ class DetectionConfig:
     """Detection & Filtering Configuration."""
     # Minimum area (pixels^2) to consider a detection valid
     min_bbox_area: int = 500
-    # Classes to detect (None = all classes)
+    # Classes to detect (None = all classes
     target_classes: Optional[List[int]] = None
     # Enable tracking
     enable_tracking: bool = False
@@ -104,6 +104,7 @@ class ApiConfig:
     cooldown_seconds: int = 30
     save_local: bool = True
     capture_dir: str = str(OUTPUTS_DIR / "violations")
+    max_saved_images: int = 100     # Auto-delete old images if count exceeds this
     # Image compression settings
     jpeg_quality: int = 60          # JPEG quality (1-100), lower = smaller file
     max_image_width: int = 800      # Max width in pixels (0 = no resize)

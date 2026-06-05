@@ -100,6 +100,10 @@ Examples:
         "--no-display", action="store_true",
         help="Run without display window (headless mode)"
     )
+    parser.add_argument(
+        "--clear-images", action="store_true",
+        help="Clear locally saved violation images and exit"
+    )
 
     return parser.parse_args()
 
@@ -162,10 +166,23 @@ def main():
     # Parse CLI arguments
     args = parse_args()
 
-    # Load settingsclear
-    
+    # Load settings
     settings = get_settings(args.config)
     settings = apply_cli_overrides(settings, args)
+
+    if args.clear_images:
+        capture_dir = Path(settings.api.capture_dir)
+        if capture_dir.exists():
+            files = list(capture_dir.glob("*.jpg"))
+            for f in files:
+                try:
+                    f.unlink()
+                except Exception as e:
+                    logger.warning(f"Could not delete {f}: {e}")
+            logger.info(f"Cleared {len(files)} saved violation images from {capture_dir}")
+        else:
+            logger.info(f"Capture directory {capture_dir} does not exist.")
+        sys.exit(0)
 
     # Log configuration
     logger.info(f"Project root: {PROJECT_ROOT}")
