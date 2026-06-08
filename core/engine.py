@@ -174,7 +174,7 @@ class DetectionEngine:
                     self._on_frame(annotated_frame, result)
 
                 # Check for violations and upload
-                self._uploader.check_and_upload(annotated_frame, result)
+                self._uploader.check_and_upload(frame, annotated_frame, result)
 
                 # Save frame if recording
                 if self._writer is not None:

@@ -48,20 +48,11 @@ api:
   cooldown_seconds: 30          # Min seconds between same violation uploads
   save_local: true              # Save violation captures locally
   capture_dir: "outputs/violations"
-  max_saved_images: 5        # Max locally saved images (auto-delete oldest)
-  # Image compression (reduces upload size significantly)
-  jpeg_quality: 60              # JPEG quality 1-100 (lower = smaller file, 60 recommended)
+  max_saved_images: 5           # Max locally saved images
+  jpeg_quality: 60              # JPEG quality 1-100 
   max_image_width: 800          # Max pixel width (0 = no resize)
   max_image_height: 600         # Max pixel height (0 = no resize)
-
-# PPE Class Names
-# class_names:
-#   0: "Gloves"
-#   1: "Vest"
-#   2: "Goggles"
-#   3: "Helmet"
-#   4: "Mask"
-#   5: "Safety Shoe"
+  upload_annotated_image: true  # True: with bbox, False: original image
 
 class_names:
   0: "Hardhat"

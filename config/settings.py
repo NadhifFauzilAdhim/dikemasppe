@@ -12,13 +12,9 @@ from typing import Dict, List, Optional
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 
-# ============================================
-# Base Paths
-# ============================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 WEIGHTS_DIR = BASE_DIR / "yolomodel"
 OUTPUTS_DIR = BASE_DIR / "outputs"
@@ -33,14 +29,14 @@ class ModelConfig:
     confidence_threshold: float = 0.5
     iou_threshold: float = 0.45
     max_detections: int = 100
-    device: str = "auto"  # "auto", "cpu", "cuda", "cuda:0"
-    half_precision: bool = False  # FP16 inference
+    device: str = "auto"  
+    half_precision: bool = False  
 
 
 @dataclass
 class VideoConfig:
     """Video Source Configuration."""
-    source: str = "0"  # "0" = webcam, or path to video/RTSP URL
+    source: str = "0" 
     frame_width: int = 1280
     frame_height: int = 720
     fps: int = 30
@@ -108,11 +104,11 @@ class ApiConfig:
     cooldown_seconds: int = 30
     save_local: bool = True
     capture_dir: str = str(OUTPUTS_DIR / "violations")
-    max_saved_images: int = 100     # Auto-delete old images if count exceeds this
-    # Image compression settings
-    jpeg_quality: int = 60          # JPEG quality (1-100), lower = smaller file
-    max_image_width: int = 800      # Max width in pixels (0 = no resize)
-    max_image_height: int = 600     # Max height in pixels (0 = no resize)
+    max_saved_images: int = 100  
+    jpeg_quality: int = 60          
+    max_image_width: int = 800      
+    max_image_height: int = 600     
+    upload_annotated_image: bool = True
 
 
 @dataclass
@@ -214,5 +210,9 @@ def get_settings(config_path: Optional[str] = None) -> Settings:
         settings.api.camera_id = os.getenv("CAMERA_ID")
     if os.getenv("VIDEO_SOURCE"):
         settings.video.source = os.getenv("VIDEO_SOURCE")
+    
+    upload_annotated = os.getenv("API_UPLOAD_ANNOTATED_IMAGE")
+    if upload_annotated is not None:
+        settings.api.upload_annotated_image = str(upload_annotated).lower() in ("true", "1", "yes", "on")
 
     return settings

@@ -79,7 +79,9 @@ POST /api/v1/violations
         }
     ],
     "frame_id": 1520,
-    "inference_time_ms": 23.45
+    "inference_time_ms": 23.45,
+    "camera_width": 1280,
+    "camera_height": 720
 }
 ```
 
@@ -101,6 +103,8 @@ POST /api/v1/violations
 | `all_detections`     | array    | Semua deteksi dalam frame (termasuk APD yang dipakai)|
 | `frame_id`           | integer  | Nomor frame saat pelanggaran terdeteksi              |
 | `inference_time_ms`  | float    | Waktu inferensi model dalam milliseconds             |
+| `camera_width`       | integer  | Lebar resolusi asli kamera (misal: 1280)             |
+| `camera_height`      | integer  | Tinggi resolusi asli kamera (misal: 720)             |
 
 ### Image File
 
@@ -191,7 +195,9 @@ curl -X POST http://localhost:8000/api/v1/violations \
     "person_count": 3,
     "all_detections": [],
     "frame_id": 1520,
-    "inference_time_ms": 23.45
+    "inference_time_ms": 23.45,
+    "camera_width": 1280,
+    "camera_height": 720
   }'
 ```
 
@@ -217,6 +223,8 @@ CREATE TABLE violations (
     raw_detections  JSON,
     frame_id        INT,
     inference_ms    DECIMAL(8,2),
+    camera_width    INT,
+    camera_height   INT,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_camera (camera_id),
@@ -259,6 +267,8 @@ public function store(Request $request)
         'raw_detections' => json_encode($payload['all_detections']),
         'frame_id'       => $payload['frame_id'],
         'inference_ms'   => $payload['inference_time_ms'],
+        'camera_width'   => $payload['camera_width'] ?? null,
+        'camera_height'  => $payload['camera_height'] ?? null,
     ]);
 
     return response()->json([

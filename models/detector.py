@@ -168,7 +168,7 @@ class PPEDetector:
         Args:
             device_config: Device configuration ("auto", "cpu", "cuda", "cuda:0")
 
-        Returns:
+        Returns:1
             Resolved device string
         """
         if device_config == "auto":

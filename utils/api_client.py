@@ -52,6 +52,8 @@ class ViolationPayload:
     all_detections: List[dict]
     frame_id: int
     inference_time_ms: float
+    camera_width: int
+    camera_height: int
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -130,12 +132,13 @@ class ViolationUploader:
             f"Uploaded: {self._upload_count}, Errors: {self._error_count}"
         )
 
-    def check_and_upload(self, frame: np.ndarray, frame_result) -> None:
+    def check_and_upload(self, original_frame: np.ndarray, annotated_frame: np.ndarray, frame_result) -> None:
         """
         Check if frame contains violations and queue upload.
 
         Args:
-            frame: The annotated BGR frame (with bounding boxes drawn)
+            original_frame: The original unannotated BGR frame
+            annotated_frame: The annotated BGR frame (with bounding boxes drawn)
             frame_result: FrameResult from postprocessor
         """
         if not self._enabled:
@@ -171,8 +174,11 @@ class ViolationUploader:
 
             self._last_upload_time[vtype] = now
 
+            # Select frame to upload based on config
+            frame_to_upload = annotated_frame if self.settings.api.upload_annotated_image else original_frame
+
             # Compress and encode frame as JPEG bytes
-            jpeg_bytes = self._compress_image(frame)
+            jpeg_bytes = self._compress_image(frame_to_upload)
             if jpeg_bytes is None:
                 logger.warning("Failed to compress frame")
                 continue
@@ -180,6 +186,9 @@ class ViolationUploader:
             # Save locally if enabled
             if self.settings.api.save_local:
                 self._save_local(jpeg_bytes, vtype, frame_result.frame_id)
+
+            # Get camera original dimensions
+            h, w = original_frame.shape[:2]
 
             # Build payload
             payload = ViolationPayload(
@@ -198,6 +207,8 @@ class ViolationUploader:
                 all_detections=[d.to_dict() for d in frame_result.detections],
                 frame_id=frame_result.frame_id,
                 inference_time_ms=round(frame_result.inference_time_ms, 2),
+                camera_width=w,
+                camera_height=h,
             )
 
             # Queue for background upload
